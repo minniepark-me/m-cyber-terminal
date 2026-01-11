@@ -135,7 +135,7 @@ elif 1 <= st.session_state.level <= 5:
     st.text_input("ENTER CODE:", key="input_box", on_change=check_logic)
     
 elif st.session_state.level == 6:
-    st.markdown('<div class="boss-banner">SYNC PROTOCOL: Sync the Dragon Timeline. <br>Year of Birth + Month of Infinity + Day of Double-Eight.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="boss-banner">SYNC PROTOCOL: Sync the Dragon Timeline aka The King of K-Pop. <br>Year of Birth + Month of Infinity + Day of Double-Eight.</div>', unsafe_allow_html=True)
     st.text_input("DRAGON NUMBER:", key="input_box", on_change=check_logic)
 
 elif st.session_state.level == 7:
