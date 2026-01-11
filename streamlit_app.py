@@ -36,7 +36,29 @@ st.markdown("""
         margin-top: 20px;
     }
 
-    /* 4. GLITCH TEXT EFFECT */
+    /* 4. BOSS LOCK STYLING (The Highlighted Special Part) */
+    @keyframes alert-pulse {
+        0% { box-shadow: 0 0 10px #FF0000; border-color: #FF0000; }
+        50% { box-shadow: 0 0 40px #FF0000; border-color: #FF5555; }
+        100% { box-shadow: 0 0 10px #FF0000; border-color: #FF0000; }
+    }
+    .boss-lock-container {
+        border: 4px solid #FF0000;
+        padding: 40px;
+        background: rgba(255, 0, 0, 0.1);
+        border-radius: 15px;
+        animation: alert-pulse 1.5s infinite;
+        text-align: center;
+    }
+    .boss-title {
+        color: #FF0000 !important;
+        font-size: 40px !important;
+        font-weight: bold;
+        text-shadow: 0 0 20px #FF0000;
+        letter-spacing: 5px;
+    }
+
+    /* 5. GLITCH TEXT EFFECT */
     @keyframes glitch {
         0% { transform: translate(0); }
         20% { transform: translate(-2px, 2px); }
@@ -54,7 +76,7 @@ st.markdown("""
         text-align: center;
     }
 
-    /* 5. INPUT BOX STYLING */
+    /* 6. INPUT BOX STYLING */
     .stTextInput > div > div > input {
         background-color: black !important;
         color: #FFFF00 !important;
@@ -63,16 +85,15 @@ st.markdown("""
         font-size: 25px !important;
         height: 60px;
         text-align: center;
-        letter-spacing: 3px;
     }
 
-    /* 6. FLASH EFFECTS */
+    /* 7. FLASH EFFECTS */
     @keyframes green-flash { 0% { background-color: #00FF41; opacity: 1; } 100% { background-color: transparent; opacity: 0; } }
     @keyframes red-flash { 0% { background-color: #FF0000; opacity: 1; } 100% { background-color: transparent; opacity: 0; } }
     .success-trigger { animation: green-flash 0.5s ease-out; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; pointer-events: none; }
     .error-trigger { animation: red-flash 0.5s ease-out; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; pointer-events: none; }
 
-    /* 7. VICTORY BOX */
+    /* 8. VICTORY BOX */
     .victory-box {
         border: 10px solid #FFFF00;
         padding: 60px;
@@ -100,12 +121,12 @@ LEVEL_DATA = {
     5: {"q": "LEVEL 5: THE PARADOX. [(True XOR True) OR (False AND True)]", "a": "FALSE"},
 }
 
-# Music Loop (G-Dragon Coup D'Etat Instrumental)
+# Music Loop
 st.markdown("""
     <iframe width="0" height="0" src="https://www.youtube.com/embed/gdTl3Vi8vvY?autoplay=1&loop=1&playlist=gdTl3Vi8vvY" frameborder="0" allow="autoplay"></iframe>
     """, unsafe_allow_html=True)
 
-# --- 4. LOGIC & LOADING BAR ---
+# --- 4. LOGIC ---
 def check_logic():
     raw = st.session_state.input_box.strip().upper()
     clean = raw.replace(" ", "").replace("O(", "").replace(")", "")
@@ -113,7 +134,7 @@ def check_logic():
     if st.session_state.level == 0:
         if clean == "START":
             with st.spinner('INITIALIZING M-CYBER...'):
-                time.sleep(1.5)
+                time.sleep(1.2)
             st.session_state.level = 1
             st.session_state.start_time = time.time()
             st.session_state.history.append(">> INITIALIZING M-CYBER PROTOCOL...")
@@ -121,12 +142,10 @@ def check_logic():
     elif 1 <= st.session_state.level <= 5:
         target = LEVEL_DATA[st.session_state.level]["a"]
         if clean == target:
-            # Progress bar for "Decrypting" vibe
             progress_bar = st.progress(0)
-            for percent_complete in range(100):
-                time.sleep(0.01)
-                progress_bar.progress(percent_complete + 1)
-            
+            for p in range(100):
+                time.sleep(0.005)
+                progress_bar.progress(p + 1)
             st.session_state.level += 1
             st.session_state.flash = "success"
             st.session_state.history.append(f">> LEVEL {st.session_state.level-1} DECRYPTED.")
@@ -168,20 +187,31 @@ for log in st.session_state.history:
 if st.session_state.level == 0:
     st.markdown('<p class="intro-text">M-CYBER SECURITY TERMINAL</p>', unsafe_allow_html=True)
     st.markdown("<h2 style='text-align:center; color:#00FF41;'>ACCESS RESTRICTED</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center;'>TYPE 'START' TO INITIALIZE DECRYPTION SEQUENCES</p>", unsafe_allow_html=True)
     st.text_input("", key="input_box", on_change=check_logic)
 
 elif 1 <= st.session_state.level <= 5:
-    st.markdown(f"<h1 style='color:#00FF41; text-align:center; text-shadow: 0 0 10px #00FF41;'>{LEVEL_DATA[st.session_state.level]['q']}</h1>", unsafe_allow_html=True)
+    st.markdown(f"<h1 style='color:#00FF41; text-align:center;'>{LEVEL_DATA[st.session_state.level]['q']}</h1>", unsafe_allow_html=True)
     st.text_input("ENTER KEYCODE:", key="input_box", on_change=check_logic)
     
 elif st.session_state.level == 6:
-    st.markdown('<div class="boss-banner" style="text-align:center;">SYNC PROTOCOL: Sync the King of K-pop Timeline. <br>Year of Birth + Month of Infinity + Day of Double-Eight.</div>', unsafe_allow_html=True)
-    st.text_input("DRAGON CODE:", key="input_box", on_change=check_logic)
+    st.markdown("""
+        <div class="boss-lock-container">
+            <p class="boss-title">⚠️ ENCRYPTION LOCK: LEVEL 1 ⚠️</p>
+            <p style='color: white; font-size: 20px;'>SYNC THE KING OF K-POP TIMELINE</p>
+            <p style='color: #FF0000; font-weight: bold;'>YEAR OF BIRTH + MONTH OF INFINITY + DAY OF DOUBLE-EIGHT</p>
+        </div>
+    """, unsafe_allow_html=True)
+    st.text_input("ENTER MASTER SYNC CODE:", key="input_box", on_change=check_logic)
 
 elif st.session_state.level == 7:
-    st.markdown('<div class="boss-banner" style="text-align:center;">FINAL IDENTITY GATE: WHO IS THE SOVEREIGN KING?</div>', unsafe_allow_html=True)
-    st.text_input("NAME:", key="input_box", on_change=check_logic)
+    st.markdown("""
+        <div class="boss-lock-container" style="border-color: #BC13FE; box-shadow: 0 0 40px #BC13FE;">
+            <p class="boss-title" style="color: #BC13FE; text-shadow: 0 0 20px #BC13FE;">🚨 FINAL IDENTITY GATE 🚨</p>
+            <p style='color: white; font-size: 20px;'>SYSTEM CORE REACHED. VERIFY THE SOVEREIGN.</p>
+            <p style='color: #BC13FE; font-weight: bold;'>WHO IS THE ONE TRUE KING?</p>
+        </div>
+    """, unsafe_allow_html=True)
+    st.text_input("AUTHORIZE IDENTITY:", key="input_box", on_change=check_logic)
 
 elif st.session_state.level == 8:
     total_time = round(st.session_state.end_time - st.session_state.start_time, 2)
