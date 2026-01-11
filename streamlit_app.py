@@ -85,12 +85,21 @@ st.markdown("""
         text-align: center;
         border-radius: 30px;
     }
-    .closing-line {
+
+    /* GLOWING ONE OF A KIND TEXT */
+    @keyframes neon-glow {
+        0% { text-shadow: 0 0 10px #00FF41, 0 0 20px #00FF41; }
+        50% { text-shadow: 0 0 25px #00FF41, 0 0 50px #00FF41; }
+        100% { text-shadow: 0 0 10px #00FF41, 0 0 20px #00FF41; }
+    }
+    .glowing-final {
         color: #00FF41;
         font-family: 'Courier New', monospace;
-        font-size: 22px;
+        font-size: 45px !important;
         margin-top: 30px;
-        font-style: italic;
+        font-weight: bold;
+        animation: neon-glow 1.5s infinite;
+        letter-spacing: 2px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -99,11 +108,9 @@ st.markdown("""
 if 'level' not in st.session_state:
     st.session_state.level = 0 
     st.session_state.history = ["SYST_READY: Awaiting User..."]
-    st.session_state.start_time = None
     st.session_state.flash = None
 
-# --- 3. AUDIO (STABLE LOAD) ---
-# This is loaded only once and is not interrupted by a timer
+# --- 3. AUDIO (STABLE LOAD - NO TIMER INTERRUPTION) ---
 st.markdown("""
     <iframe width="0" height="0" src="https://www.youtube.com/embed/gdTl3Vi8vvY?autoplay=1&loop=1&playlist=gdTl3Vi8vvY" frameborder="0" allow="autoplay"></iframe>
     """, unsafe_allow_html=True)
@@ -124,7 +131,6 @@ def check_logic():
     
     if st.session_state.level == 0 and clean == "START":
         st.session_state.level = 1
-        st.session_state.start_time = time.time()
         st.session_state.history.append(">> TERMINAL ONLINE. ENCRYPTION ACTIVE.")
     elif 1 <= st.session_state.level <= 5:
         if clean == LEVEL_DATA[st.session_state.level]["a"]:
@@ -140,7 +146,6 @@ def check_logic():
         st.session_state.history.append(">> TIMELINE SYNCED.")
     elif st.session_state.level == 7 and clean == "G-DRAGON":
         st.session_state.level = 8
-        st.session_state.end_time = time.time()
         st.session_state.history.append(">> IDENTITY VERIFIED. CORE UNLOCKED.")
     st.session_state.input_box = ""
 
@@ -176,9 +181,9 @@ elif st.session_state.level == 8:
     st.markdown(f"""
         <div class="victory-box">
             <h1 style="font-size:70px; color:#FFFF00;">👑 MISSION ACCOMPLISHED</h1>
-            <p style="color:#00FF41; font-size:30px; letter-spacing:5px;">SYSTEM SECURED BY G-DRAGON</p>
-            <div class="closing-line">
-                "In the digital void, logic is the sword and creativity is the crown. You have proven yourself worthy of both."
+            <p style="color:#FFFF00; font-size:30px; letter-spacing:5px; opacity: 0.8;">WELCOME HOME, G-DRAGON</p>
+            <div class="glowing-final">
+                Yes sir, You are ONE OF A KIND 💸 🐉
             </div>
         </div>
     """, unsafe_allow_html=True)
