@@ -44,18 +44,14 @@ st.markdown("""
     }
     .log-entry { margin: 0; padding: 2px 0; border-bottom: 1px solid rgba(0, 255, 65, 0.1); }
     
-    @keyframes alert-pulse {
-        0% { box-shadow: 0 0 10px #FF0000; border-color: #FF0000; }
-        50% { box-shadow: 0 0 40px #FF0000; border-color: #FF5555; }
-        100% { box-shadow: 0 0 10px #FF0000; border-color: #FF0000; }
-    }
-    .boss-lock-container {
-        border: 4px solid #FF0000;
-        padding: 40px;
-        background: rgba(255, 0, 0, 0.1);
-        border-radius: 15px;
-        animation: alert-pulse 1.5s infinite;
-        text-align: center;
+    /* GLITCH ANIMATION FOR THE TERMINAL TITLE */
+    @keyframes glitch {
+        0% { transform: translate(0); text-shadow: 2px 2px #00FF41; }
+        20% { transform: translate(-3px, 3px); text-shadow: -2px -2px #ff00ff; }
+        40% { transform: translate(-3px, -3px); }
+        60% { transform: translate(3px, 3px); }
+        80% { transform: translate(3px, -3px); }
+        100% { transform: translate(0); }
     }
     .intro-text {
         color: #BC13FE !important;
@@ -63,7 +59,9 @@ st.markdown("""
         font-weight: bold;
         text-shadow: 3px 3px #00FF41;
         text-align: center;
+        animation: glitch 0.3s infinite; /* Fixed: Added infinite animation */
     }
+
     .stTextInput > div > div > input {
         background-color: black !important;
         color: #FFFF00 !important;
@@ -72,6 +70,8 @@ st.markdown("""
         height: 60px;
         text-align: center;
     }
+
+    /* SUCCESS/ERROR FLASHES */
     @keyframes green-flash { 0% { background-color: #00FF41; opacity: 0.5; } 100% { background-color: transparent; opacity: 0; } }
     @keyframes red-flash { 0% { background-color: #FF0000; opacity: 0.5; } 100% { background-color: transparent; opacity: 0; } }
     .success-trigger { animation: green-flash 0.5s ease-out; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; pointer-events: none; }
@@ -110,9 +110,24 @@ if 'level' not in st.session_state:
     st.session_state.history = ["SYST_READY: Awaiting User..."]
     st.session_state.flash = None
 
-# --- 3. AUDIO (STABLE LOAD - NO TIMER INTERRUPTION) ---
+# --- 3. AUDIO (FIXED WITH AUTO-START SCRIPT) ---
+# We use a hidden iframe plus a small script to trigger audio on the first click
 st.markdown("""
-    <iframe width="0" height="0" src="https://www.youtube.com/embed/gdTl3Vi8vvY?autoplay=1&loop=1&playlist=gdTl3Vi8vvY" frameborder="0" allow="autoplay"></iframe>
+    <div id="audio-container">
+        <iframe id="youtube-audio" width="0" height="0" 
+        src="https://www.youtube.com/embed/gdTl3Vi8vvY?autoplay=1&loop=1&playlist=gdTl3Vi8vvY&enablejsapi=1" 
+        frameborder="0" allow="autoplay"></iframe>
+    </div>
+    <script>
+        // Browsers block audio until a user clicks. 
+        // This triggers the play function as soon as the user interacts with the app.
+        window.parent.document.addEventListener('mousedown', function() {
+            var iframe = window.parent.document.getElementById('youtube-audio');
+            if (iframe) {
+                iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            }
+        }, {once: true});
+    </script>
     """, unsafe_allow_html=True)
 
 # --- 4. DATA ---
