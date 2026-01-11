@@ -125,7 +125,7 @@ LEVEL_DATA = {
 
 # --- 4. AUDIO FIX (Direct Audio Injection) ---
 # Using a G-Dragon instrumental link from a stable audio source
-audio_link = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3" # Placeholder - Replace with your G-Dragon .mp3 URL
+audio_link = "https://www.youtube.com/embed/gdTl3Vi8vvY?autoplay=1&loop=1&playlist=gdTl3Vi8vvY" # Placeholder - Replace with your G-Dragon .mp3 URL
 st.markdown(f"""
     <audio id="bgm" autoplay loop>
         <source src="{audio_link}" type="audio/mp3">
