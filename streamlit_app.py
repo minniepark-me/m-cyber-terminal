@@ -166,7 +166,7 @@ elif 1 <= st.session_state.level <= 5:
     st.text_input("ENTER KEYCODE:", key="input_box", on_change=check_logic)
 
 elif st.session_state.level == 6:
-    st.markdown('<div style="text-align:center; border:2px solid red; padding:20px; color:red;"><h1>⚠️ ENCRYPTION LOCK: LEVEL 1 ⚠️</h1> <p style='color: white; font-size: 20px;'>SYNC THE KING OF K-POP TIMELINE</p><p>YEAR OF BIRTH + MONTH OF INFINITY + DAY OF DOUBLE-EIGHT</p></div>', unsafe_allow_html=True)
+    st.markdown('<div style="text-align:center; border:2px solid red; padding:20px; color:red;"><h1>⚠️ ENCRYPTION LOCK: LEVEL 1 ⚠️</h1> <p>SYNC THE KING OF K-POP TIMELINE</p> <p>YEAR OF BIRTH + MONTH OF INFINITY + DAY OF DOUBLE-EIGHT</p></div>', unsafe_allow_html=True)
     st.text_input("SYNC CODE:", key="input_box", on_change=check_logic)
 
 elif st.session_state.level == 7:
