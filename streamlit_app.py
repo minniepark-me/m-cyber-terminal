@@ -30,6 +30,35 @@ st.markdown("""
         z-index: 5;
     }
     
+    /* VIBRATION / SIGNAL ANIMATIONS */
+    @keyframes red-vibrate {
+        0% { transform: translate(0); box-shadow: 0 0 10px #FF0000; }
+        25% { transform: translate(2px, -2px); box-shadow: 0 0 30px #FF0000; }
+        50% { transform: translate(-2px, 2px); }
+        75% { transform: translate(2px, 2px); }
+        100% { transform: translate(0); box-shadow: 0 0 10px #FF0000; }
+    }
+
+    @keyframes violet-vibrate {
+        0% { transform: translate(0); box-shadow: 0 0 10px #BC13FE; }
+        25% { transform: translate(-2px, 2px); box-shadow: 0 0 30px #BC13FE; }
+        50% { transform: translate(2px, -2px); }
+        75% { transform: translate(-2px, -2px); }
+        100% { transform: translate(0); box-shadow: 0 0 10px #BC13FE; }
+    }
+
+    .red-signal-box {
+        text-align: center; border: 4px solid #FF0000; padding: 20px; color: #FF0000;
+        animation: red-vibrate 0.15s infinite; background: rgba(255, 0, 0, 0.1);
+        border-radius: 15px;
+    }
+
+    .violet-signal-box {
+        text-align: center; border: 4px solid #BC13FE; padding: 20px; color: #BC13FE;
+        animation: violet-vibrate 0.2s infinite; background: rgba(188, 19, 254, 0.1);
+        border-radius: 15px;
+    }
+
     /* GLITCH TITLE */
     @keyframes glitch {
         0% { transform: translate(0); text-shadow: 2px 2px #00FF41; }
@@ -42,24 +71,32 @@ st.markdown("""
         animation: glitch 0.4s infinite; text-align: center;
     }
 
-    /* FULL SCREEN FLASHES - Fixed Opacity */
+    /* FIXED LOG FEED - Prevent Merging */
+    .log-container {
+        background: rgba(0, 0, 0, 0.7); border: 1px solid #00FF41;
+        padding: 15px; height: 120px; overflow-y: auto;
+        font-family: 'Courier New', monospace; color: #00FF41;
+        margin-bottom: 30px; border-radius: 10px;
+        box-shadow: inset 0 0 10px rgba(0, 255, 65, 0.2);
+    }
+
+    /* FULL SCREEN FLASHES */
     @keyframes green-flash-anim { 0% { background: rgba(0, 255, 65, 0.8); } 100% { background: transparent; } }
     @keyframes red-flash-anim { 0% { background: rgba(255, 0, 0, 0.8); } 100% { background: transparent; } }
     .success-trigger { animation: green-flash-anim 0.5s forwards; position: fixed; top:0; left:0; width:100vw; height:100vh; z-index:9999; pointer-events:none; }
     .error-trigger { animation: red-flash-anim 0.5s forwards; position: fixed; top:0; left:0; width:100vw; height:100vh; z-index:9999; pointer-events:none; }
 
-    /* VICTORY BOX */
-    .one-of-a-kind {
-        color: #00FF41; font-size: 55px !important; font-weight: bold;
-        text-shadow: 0 0 20px #00FF41, 0 0 40px #00FF41;
-        font-family: 'Courier New', monospace;
-        text-align: center; margin: 20px 0;
+    /* VICTORY BOX NEON GLOW */
+    @keyframes neon-pulse {
+        0% { text-shadow: 0 0 10px #00FF41, 0 0 20px #00FF41; transform: scale(1); }
+        50% { text-shadow: 0 0 30px #00FF41, 0 0 60px #00FF41; transform: scale(1.02); }
+        100% { text-shadow: 0 0 10px #00FF41, 0 0 20px #00FF41; transform: scale(1); }
     }
-
-    .log-container {
-        background: rgba(0, 0, 0, 0.5); border: 1px solid #00FF41;
-        padding: 10px; height: 100px; overflow-y: auto;
-        font-family: 'Courier New', monospace; color: #00FF41;
+    .one-of-a-kind {
+        color: #00FF41; font-size: 65px !important; font-weight: bold;
+        animation: neon-pulse 1.5s infinite;
+        font-family: 'Courier New', monospace;
+        text-align: center; margin: 30px 0;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -71,7 +108,6 @@ if 'level' not in st.session_state:
     st.session_state.flash = None
 
 # --- 3. STABLE AUDIO ENGINE ---
-# Using a more reliable YouTube embed method
 st.markdown("""
     <div id="cyber-audio-node">
         <iframe width="0" height="0" 
@@ -79,7 +115,6 @@ st.markdown("""
         frameborder="0" allow="autoplay"></iframe>
     </div>
     <script>
-        // Force audio on any interaction
         function playAudio() {
             var iframe = document.querySelector('iframe');
             if (iframe) {
@@ -152,8 +187,8 @@ elif st.session_state.flash == "error":
     st.markdown('<div class="error-trigger"></div>', unsafe_allow_html=True)
     st.session_state.flash = None
 
-# Log Feed
-log_html = "".join([f"<div>{l}</div>" for l in st.session_state.history[::-1]])
+# Log Feed (Separated by Margin)
+log_html = "".join([f"<div style='margin-bottom:5px;'>{l}</div>" for l in st.session_state.history[::-1]])
 st.markdown(f'<div class="log-container">{log_html}</div>', unsafe_allow_html=True)
 
 if st.session_state.level == 0:
@@ -166,19 +201,19 @@ elif 1 <= st.session_state.level <= 5:
     st.text_input("ENTER KEYCODE:", key="input_box", on_change=check_logic)
 
 elif st.session_state.level == 6:
-    st.markdown('<div style="text-align:center; border:2px solid red; padding:20px; color:red;"><h1>⚠️ ENCRYPTION LOCK: LEVEL 1 ⚠️</h1> <p>SYNC THE KING OF K-POP TIMELINE</p> <p>YEAR OF BIRTH + MONTH OF INFINITY + DAY OF DOUBLE-EIGHT</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="red-signal-box"><h1>⚠️ ENCRYPTION LOCK: LEVEL 1 ⚠️</h1> <p>SYNC THE KING OF K-POP TIMELINE</p> <p style="font-weight:bold;">YEAR OF BIRTH + MONTH OF INFINITY + DAY OF DOUBLE-EIGHT</p></div>', unsafe_allow_html=True)
     st.text_input("SYNC CODE:", key="input_box", on_change=check_logic)
 
 elif st.session_state.level == 7:
-    st.markdown('<div style="text-align:center; border:2px solid #BC13FE; padding:20px; color:#BC13FE;"><h1>🚨 FINAL GATE 🚨</h1><p>WHO IS THE ONE TRUE KING?</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="violet-signal-box"><h1>🚨 FINAL GATE 🚨</h1><p>WHO IS THE ONE TRUE KING?</p></div>', unsafe_allow_html=True)
     st.text_input("AUTHORIZE:", key="input_box", on_change=check_logic)
 
 elif st.session_state.level == 8:
     st.markdown(f"""
-        <div style="border:10px solid #FFFF00; padding:50px; background:black; border-radius:30px; text-align:center;">
-            <h1 style="color:#FFFF00; font-size:60px;">👑 MISSION ACCOMPLISHED</h1>
+        <div style="border:10px solid #FFFF00; padding:50px; background:black; border-radius:30px; text-align:center; box-shadow: 0 0 50px rgba(255, 255, 0, 0.4);">
+            <h1 style="color:#FFFF00; font-size:60px; margin-bottom:10px;">👑 MISSION ACCOMPLISHED</h1>
             <div class="one-of-a-kind">Yes, sir ONE OF A KIND 💸 🐉</div>
-            <p style="color:#00FF41; font-size:20px;">SYSTEM SECURED. WELCOME HOME, G-DRAGON.</p>
+            <p style="color:#00FF41; font-size:20px; border-top: 1px solid #00FF41; padding-top:20px;">SYSTEM SECURED. WELCOME HOME, G-DRAGON.</p>
         </div>
     """, unsafe_allow_html=True)
     st.balloons()
