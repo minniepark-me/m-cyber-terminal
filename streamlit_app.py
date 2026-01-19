@@ -102,7 +102,7 @@ st.markdown(f"""
         font-family: 'Courier New', monospace; color: #00FF41;
         margin-bottom: 30px; border-radius: 10px;
         box-shadow: inset 0 0 10px rgba(0, 255, 65, 0.2);
-    }
+    }}
 
     /* FULL SCREEN FLASHES */
     @keyframes green-flash-anim {{ 0% {{ background: rgba(0, 255, 65, 0.8); }} 100% {{ background: transparent; }} }}
