@@ -4,6 +4,10 @@ import time
 # --- 1. CONFIGURATION & STYLING ---
 st.set_page_config(page_title="M-Cyber God-Mode", page_icon="🐉", layout="wide")
 
+# Initialize error counter to force re-renders for the shake effect
+if 'err_idx' not in st.session_state:
+    st.session_state.err_idx = 0
+
 # Determine if we should apply the shake class
 shake_class = "shake-input" if st.session_state.get('flash') == "error" else ""
 
@@ -189,7 +193,9 @@ def trigger_loading(message):
     placeholder.empty()
 
 def check_logic():
-    raw = st.session_state.input_box.strip().upper()
+    # Capture current input value before resetting
+    curr_input = st.session_state.get("input_box", "")
+    raw = curr_input.strip().upper()
     clean = raw.replace(" ", "").replace("O(", "").replace(")", "")
     
     if st.session_state.level == 0 and clean == "START":
@@ -205,6 +211,7 @@ def check_logic():
             st.session_state.history.append(f">> L{st.session_state.level-1} SECURED.")
         else:
             st.session_state.flash = "error"
+            st.session_state.err_idx += 1 # IMPORTANT: Change key to trigger animation
             st.session_state.history.append(f">> ACCESS DENIED: '{raw}'")
             
     elif st.session_state.level == 6 and clean == "2014":
@@ -217,30 +224,29 @@ def check_logic():
         st.session_state.level = 8
         st.session_state.flash = "success"
 
+    # Reset input field
     st.session_state.input_box = ""
 
 # --- 6. RENDER ---
 
-# Handle Flashes (Unique ID added to force re-run every time)
+# Handle Flashes
 if st.session_state.flash == "success":
     st.markdown(f'<div class="success-trigger" id="{time.time()}"></div>', unsafe_allow_html=True)
     st.session_state.flash = None
 elif st.session_state.flash == "error":
     st.markdown(f'<div class="error-trigger" id="{time.time()}"></div>', unsafe_allow_html=True)
-    # The session state is kept as "error" just long enough to render the CSS shake
-    # then reset via rerun or logic. For this version, we reset after rendering.
     st.session_state.flash = None
     
 log_html = "".join([f"<div style='margin-bottom:5px;'>{l}</div>" for l in st.session_state.history[::-1]])
 st.markdown(f'<div class="log-container">{log_html}</div>', unsafe_allow_html=True)
 
-# Container to hold the input so we can target it with the shake class
-input_container = st.container()
-
-with input_container:
-    # This wrapper div will have the .shake-input class if flash was "error"
+# THE FIX: Wrap input in a container that reacts to the err_idx
+with st.container():
     st.markdown(f'<div class="{shake_class}">', unsafe_allow_html=True)
     
+    # We use a dynamic key based on err_idx so Streamlit re-mounts the widget on error
+    input_key = f"input_box_{st.session_state.err_idx}"
+
     if st.session_state.level == 0:
         st.markdown('<p class="intro-text">M-CYBER SECURITY TERMINAL</p>', unsafe_allow_html=True)
         st.markdown("<p style='text-align:center; color:#FFFF00;'>SYSTEM IDLE. TYPE 'START' TO BEGIN.</p>", unsafe_allow_html=True)
