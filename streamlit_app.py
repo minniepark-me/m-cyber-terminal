@@ -4,30 +4,23 @@ import time
 # --- 1. CONFIGURATION & STYLING ---
 st.set_page_config(page_title="M-Cyber God-Mode", page_icon="🐉", layout="wide")
 
-# Initialize error counter to force re-renders for the shake effect
-if 'err_idx' not in st.session_state:
-    st.session_state.err_idx = 0
-
-# Determine if we should apply the shake class
-shake_class = "shake-input" if st.session_state.get('flash') == "error" else ""
-
-st.markdown(f"""
+st.markdown("""
     <style>
-    .stApp {{
+    .stApp {
         background: radial-gradient(circle, #1a022d, #0d0208);
         background-attachment: fixed;
         overflow: hidden;
-    }}
+    }
     
     /* SCANLINE EFFECT */
-    .stApp::before {{
+    .stApp::before {
         content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
         background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
                     linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
         z-index: 2; background-size: 100% 4px, 3px 100%; pointer-events: none;
-    }}
+    }
 
-    .block-container {{
+    .block-container {
         border: 2px solid #00FF41;
         box-shadow: 0 0 20px #00FF41, inset 0 0 10px #00FF41;
         padding: 50px !important;
@@ -35,115 +28,94 @@ st.markdown(f"""
         border-radius: 20px;
         margin-top: 20px;
         z-index: 5;
-    }}
+    }
     
-    /* SHAKE ANIMATION */
-    @keyframes rattle {{
-        0% {{ transform: translateX(0); }}
-        10% {{ transform: translateX(-10px); }}
-        20% {{ transform: translateX(10px); }}
-        30% {{ transform: translateX(-10px); }}
-        40% {{ transform: translateX(10px); }}
-        50% {{ transform: translateX(-10px); }}
-        60% {{ transform: translateX(10px); }}
-        70% {{ transform: translateX(-10px); }}
-        80% {{ transform: translateX(10px); }}
-        90% {{ transform: translateX(-10px); }}
-        100% {{ transform: translateX(0); }}
-    }}
-
-    /* Apply shake class to the text input wrapper */
-    .{shake_class} .stTextInput > div {{
-        animation: rattle 0.4s ease-in-out;
-        border: 2px solid #FF0000 !important;
-    }}
-
     /* VIBRATION / SIGNAL ANIMATIONS */
-    @keyframes red-vibrate {{
-        0% {{ transform: translate(0); box-shadow: 0 0 10px #FF0000; }}
-        25% {{ transform: translate(2px, -2px); box-shadow: 0 0 30px #FF0000; }}
-        50% {{ transform: translate(-2px, 2px); }}
-        75% {{ transform: translate(2px, 2px); }}
-        100% {{ transform: translate(0); box-shadow: 0 0 10px #FF0000; }}
-    }}
+    @keyframes red-vibrate {
+        0% { transform: translate(0); box-shadow: 0 0 10px #FF0000; }
+        25% { transform: translate(2px, -2px); box-shadow: 0 0 30px #FF0000; }
+        50% { transform: translate(-2px, 2px); }
+        75% { transform: translate(2px, 2px); }
+        100% { transform: translate(0); box-shadow: 0 0 10px #FF0000; }
+    }
 
-    @keyframes violet-vibrate {{
-        0% {{ transform: translate(0); box-shadow: 0 0 10px #BC13FE; }}
-        25% {{ transform: translate(-2px, 2px); box-shadow: 0 0 30px #BC13FE; }}
-        50% {{ transform: translate(2px, -2px); }}
-        75% {{ transform: translate(-2px, -2px); }}
-        100% {{ transform: translate(0); box-shadow: 0 0 10px #BC13FE; }}
-    }}
+    @keyframes violet-vibrate {
+        0% { transform: translate(0); box-shadow: 0 0 10px #BC13FE; }
+        25% { transform: translate(-2px, 2px); box-shadow: 0 0 30px #BC13FE; }
+        50% { transform: translate(2px, -2px); }
+        75% { transform: translate(-2px, -2px); }
+        100% { transform: translate(0); box-shadow: 0 0 10px #BC13FE; }
+    }
 
-    .red-signal-box {{
+    .red-signal-box {
         text-align: center; border: 4px solid #FF0000; padding: 20px; color: #FF0000;
         animation: red-vibrate 0.15s infinite; background: rgba(255, 0, 0, 0.1);
         border-radius: 15px;
-    }}
+    }
 
-    .violet-signal-box {{
+    .violet-signal-box {
         text-align: center; border: 4px solid #BC13FE; padding: 20px; color: #BC13FE;
         animation: violet-vibrate 0.2s infinite; background: rgba(188, 19, 254, 0.1);
         border-radius: 15px;
-    }}
+    }
 
     /* GLITCH TITLE */
-    @keyframes glitch {{
-        0% {{ transform: translate(0); text-shadow: 2px 2px #00FF41; }}
-        25% {{ transform: translate(-2px, 2px); text-shadow: -2px -2px #BC13FE; }}
-        50% {{ transform: translate(2px, -2px); }}
-        100% {{ transform: translate(0); }}
-    }}
-    .intro-text {{
+    @keyframes glitch {
+        0% { transform: translate(0); text-shadow: 2px 2px #00FF41; }
+        25% { transform: translate(-2px, 2px); text-shadow: -2px -2px #BC13FE; }
+        50% { transform: translate(2px, -2px); }
+        100% { transform: translate(0); }
+    }
+    .intro-text {
         color: #BC13FE !important; font-size: 45px !important; font-weight: bold;
         animation: glitch 0.4s infinite; text-align: center;
-    }}
+    }
 
-    /* LOG FEED */
-    .log-container {{
+    /* FIXED LOG FEED - Prevent Merging */
+    .log-container {
         background: rgba(0, 0, 0, 0.7); border: 1px solid #00FF41;
         padding: 15px; height: 120px; overflow-y: auto;
         font-family: 'Courier New', monospace; color: #00FF41;
         margin-bottom: 30px; border-radius: 10px;
         box-shadow: inset 0 0 10px rgba(0, 255, 65, 0.2);
-    }}
+    }
 
     /* FULL SCREEN FLASHES */
-    @keyframes green-flash-anim {{ 0% {{ background: rgba(0, 255, 65, 0.8); }} 100% {{ background: transparent; }} }}
-    @keyframes red-flash-anim {{ 0% {{ background: rgba(255, 0, 0, 0.8); }} 100% {{ background: transparent; }} }}
-    .success-trigger {{ animation: green-flash-anim 0.5s forwards; position: fixed; top:0; left:0; width:100vw; height:100vh; z-index:9999; pointer-events:none; }}
-    .error-trigger {{ animation: red-flash-anim 0.5s forwards; position: fixed; top:0; left:0; width:100vw; height:100vh; z-index:9999; pointer-events:none; }}
+    @keyframes green-flash-anim { 0% { background: rgba(0, 255, 65, 0.8); } 100% { background: transparent; } }
+    @keyframes red-flash-anim { 0% { background: rgba(255, 0, 0, 0.8); } 100% { background: transparent; } }
+    .success-trigger { animation: green-flash-anim 0.5s forwards; position: fixed; top:0; left:0; width:100vw; height:100vh; z-index:9999; pointer-events:none; }
+    .error-trigger { animation: red-flash-anim 0.5s forwards; position: fixed; top:0; left:0; width:100vw; height:100vh; z-index:9999; pointer-events:none; }
 
     /* INPUT BOX CENTERING + BLUE COLOR */
-    .stTextInput > div > div > input {{
+    .stTextInput > div > div > input {
         text-align: center !important;
         background-color: black !important;
-        color: #00CCFF !important;
+        color: #00CCFF !important; /* ELECTRIC BLUE */
         border: 2px solid #00CCFF !important;
         font-size: 25px !important;
         height: 60px;
         text-shadow: 0 0 10px #00CCFF;
-    }}
+    }
     
     /* VICTORY BOX NEON GLOW */
-    @keyframes neon-pulse {{
-        0% {{ text-shadow: 0 0 10px #00FF41, 0 0 20px #00FF41; transform: scale(1); }}
-        50% {{ text-shadow: 0 0 30px #00FF41, 0 0 60px #00FF41; transform: scale(1.02); }}
-        100% {{ text-shadow: 0 0 10px #00FF41, 0 0 20px #00FF41; transform: scale(1); }}
-    }}
+    @keyframes neon-pulse {
+        0% { text-shadow: 0 0 10px #00FF41, 0 0 20px #00FF41; transform: scale(1); }
+        50% { text-shadow: 0 0 30px #00FF41, 0 0 60px #00FF41; transform: scale(1.02); }
+        100% { text-shadow: 0 0 10px #00FF41, 0 0 20px #00FF41; transform: scale(1); }
+    }
     
     /* BLINKING EFFECT FOR ONE OF A KIND */
-    @keyframes neon-blink {{
-        0%, 100% {{ opacity: 1; text-shadow: 0 0 20px #00FF41, 0 0 40px #00FF41; }}
-        50% {{ opacity: 0.3; text-shadow: none; }}
-    }}
+    @keyframes neon-blink {
+        0%, 100% { opacity: 1; text-shadow: 0 0 20px #00FF41, 0 0 40px #00FF41; }
+        50% { opacity: 0.3; text-shadow: none; }
+    }
     
-    .one-of-a-kind {{
+    .one-of-a-kind {
         color: #00FF41; font-size: 65px !important; font-weight: bold;
-        animation: neon-blink 0.8s infinite;
+        animation: neon-pulse 1.5s infinite;
         font-family: 'Courier New', monospace;
         text-align: center; margin: 30px 0;
-    }}
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -193,9 +165,7 @@ def trigger_loading(message):
     placeholder.empty()
 
 def check_logic():
-    # Capture current input value before resetting
-    curr_input = st.session_state.get("input_box", "")
-    raw = curr_input.strip().upper()
+    raw = st.session_state.input_box.strip().upper()
     clean = raw.replace(" ", "").replace("O(", "").replace(")", "")
     
     if st.session_state.level == 0 and clean == "START":
@@ -211,7 +181,6 @@ def check_logic():
             st.session_state.history.append(f">> L{st.session_state.level-1} SECURED.")
         else:
             st.session_state.flash = "error"
-            st.session_state.err_idx += 1 # IMPORTANT: Change key to trigger animation
             st.session_state.history.append(f">> ACCESS DENIED: '{raw}'")
             
     elif st.session_state.level == 6 and clean == "2014":
@@ -224,49 +193,42 @@ def check_logic():
         st.session_state.level = 8
         st.session_state.flash = "success"
 
-    # Reset input field
     st.session_state.input_box = ""
 
 # --- 6. RENDER ---
 
-# Handle Flashes
+# Handle Flashes (Unique ID added to force re-run every time)
 if st.session_state.flash == "success":
+    # The 'id' change forces the browser to play the animation again
     st.markdown(f'<div class="success-trigger" id="{time.time()}"></div>', unsafe_allow_html=True)
     st.session_state.flash = None
 elif st.session_state.flash == "error":
+    # The 'id' change forces the browser to play the animation again
     st.markdown(f'<div class="error-trigger" id="{time.time()}"></div>', unsafe_allow_html=True)
     st.session_state.flash = None
     
+# Log Feed (Separated by Margin)
 log_html = "".join([f"<div style='margin-bottom:5px;'>{l}</div>" for l in st.session_state.history[::-1]])
 st.markdown(f'<div class="log-container">{log_html}</div>', unsafe_allow_html=True)
 
-# THE FIX: Wrap input in a container that reacts to the err_idx
-with st.container():
-    st.markdown(f'<div class="{shake_class}">', unsafe_allow_html=True)
-    
-    # We use a dynamic key based on err_idx so Streamlit re-mounts the widget on error
-    input_key = f"input_box_{st.session_state.err_idx}"
+if st.session_state.level == 0:
+    st.markdown('<p class="intro-text">M-CYBER SECURITY TERMINAL</p>', unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; color:#FFFF00;'>SYSTEM IDLE. TYPE 'START' TO BEGIN.</p>", unsafe_allow_html=True)
+    st.text_input("", key="input_box", on_change=check_logic)
 
-    if st.session_state.level == 0:
-        st.markdown('<p class="intro-text">M-CYBER SECURITY TERMINAL</p>', unsafe_allow_html=True)
-        st.markdown("<p style='text-align:center; color:#FFFF00;'>SYSTEM IDLE. TYPE 'START' TO BEGIN.</p>", unsafe_allow_html=True)
-        st.text_input("", key="input_box", on_change=check_logic)
+elif 1 <= st.session_state.level <= 5:
+    st.markdown(f"<h1 style='color:#00FF41; text-align:center;'>{LEVEL_DATA[st.session_state.level]['q']}</h1>", unsafe_allow_html=True)
+    st.text_input("ENTER KEYCODE:", key="input_box", on_change=check_logic)
 
-    elif 1 <= st.session_state.level <= 5:
-        st.markdown(f"<h1 style='color:#00FF41; text-align:center;'>{LEVEL_DATA[st.session_state.level]['q']}</h1>", unsafe_allow_html=True)
-        st.text_input("ENTER KEYCODE:", key="input_box", on_change=check_logic)
+elif st.session_state.level == 6:
+    st.markdown('<div class="red-signal-box"><h1>⚠️ ENCRYPTION LOCK: LEVEL 1 ⚠️</h1> <p>SYNC THE KING OF K-POP TIMELINE</p> <p style="font-weight:bold;">YEAR OF BIRTH + MONTH OF INFINITY + DAY OF DOUBLE-EIGHT</p></div>', unsafe_allow_html=True)
+    st.text_input("SYNC CODE:", key="input_box", on_change=check_logic)
 
-    elif st.session_state.level == 6:
-        st.markdown('<div class="red-signal-box"><h1>⚠️ ENCRYPTION LOCK: LEVEL 1 ⚠️</h1> <p>SYNC THE KING OF K-POP TIMELINE</p> <p style="font-weight:bold;">YEAR OF BIRTH + MONTH OF INFINITY + DAY OF DOUBLE-EIGHT</p></div>', unsafe_allow_html=True)
-        st.text_input("SYNC CODE:", key="input_box", on_change=check_logic)
+elif st.session_state.level == 7:
+    st.markdown('<div class="violet-signal-box"><h1>🚨 FINAL GATE 🚨</h1><p>WHO IS THE K-POP KING?</p></div>', unsafe_allow_html=True)
+    st.text_input("AUTHORIZE:", key="input_box", on_change=check_logic)
 
-    elif st.session_state.level == 7:
-        st.markdown('<div class="violet-signal-box"><h1>🚨 FINAL GATE 🚨</h1><p>WHO IS THE K-POP KING?</p></div>', unsafe_allow_html=True)
-        st.text_input("AUTHORIZE:", key="input_box", on_change=check_logic)
-    
-    st.markdown('</div>', unsafe_allow_html=True)
-
-if st.session_state.level == 8:
+elif st.session_state.level == 8:
     st.markdown(f"""
         <div style="border:10px solid #FFFF00; padding:50px; background:black; border-radius:30px; text-align:center; box-shadow: 0 0 50px rgba(255, 255, 0, 0.4);">
             <h1 style="color:#FFFF00; font-size:60px; margin-bottom:10px;">👑 MISSION ACCOMPLISHED 🐉</h1>
