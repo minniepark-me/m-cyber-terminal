@@ -116,6 +116,36 @@ st.markdown("""
         font-family: 'Courier New', monospace;
         text-align: center; margin: 30px 0;
     }
+    /* --- MOBILE OPTIMIZATION --- */
+    @media (max-width: 768px) {
+        .block-container {
+            padding: 20px !important;
+            margin-top: 10px !important;
+            border-width: 1px !important;
+        }
+        
+        .intro-text {
+            font-size: 28px !important;
+        }
+        
+        .one-of-a-kind {
+            font-size: 35px !important;
+        }
+        
+        .stTextInput > div > div > input {
+            font-size: 18px !important;
+            height: 50px !important;
+        }
+
+        h1, h2 {
+            font-size: 1.5rem !important;
+        }
+        
+        .log-container {
+            height: 100px;
+            font-size: 12px;
+        }
+    }
     </style>
     """, unsafe_allow_html=True)
 
