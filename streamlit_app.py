@@ -11,99 +11,87 @@ st.markdown("""
         background-attachment: fixed;
         overflow: hidden;
     }
+    
+    /* SCANLINE EFFECT */
     .stApp::before {
         content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
         background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
                     linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
         z-index: 2; background-size: 100% 4px, 3px 100%; pointer-events: none;
     }
+
     .block-container {
         border: 2px solid #00FF41;
         box-shadow: 0 0 20px #00FF41, inset 0 0 10px #00FF41;
         padding: 50px !important;
-        background: rgba(13, 2, 8, 0.85);
+        background: rgba(13, 2, 8, 0.9);
         border-radius: 20px;
         margin-top: 20px;
+        z-index: 5;
     }
     
-    /* LOG FEED STYLING */
-    .log-container {
-        background: rgba(0, 255, 65, 0.1);
-        border: 1px solid #00FF41;
-        padding: 10px;
-        height: 120px;
-        overflow-y: auto;
-        font-family: 'Courier New', monospace;
-        margin-bottom: 20px;
-        border-radius: 5px;
-    }
-
     /* GLITCH TITLE */
     @keyframes glitch {
-        0% { transform: translate(0); }
-        20% { transform: translate(-2px, 2px); }
-        40% { transform: translate(-2px, -2px); }
+        0% { transform: translate(0); text-shadow: 2px 2px #00FF41; }
+        25% { transform: translate(-2px, 2px); text-shadow: -2px -2px #BC13FE; }
+        50% { transform: translate(2px, -2px); }
         100% { transform: translate(0); }
     }
     .intro-text {
         color: #BC13FE !important; font-size: 45px !important; font-weight: bold;
-        text-shadow: 3px 3px #00FF41; animation: glitch 0.3s infinite; text-align: center;
+        animation: glitch 0.4s infinite; text-align: center;
     }
 
-    /* VICTORY GLOW */
-    @keyframes neon-glow {
-        0% { text-shadow: 0 0 10px #00FF41, 0 0 20px #00FF41; }
-        50% { text-shadow: 0 0 30px #00FF41, 0 0 60px #00FF41; }
-        100% { text-shadow: 0 0 10px #00FF41, 0 0 20px #00FF41; }
-    }
+    /* FULL SCREEN FLASHES - Fixed Opacity */
+    @keyframes green-flash-anim { 0% { background: rgba(0, 255, 65, 0.8); } 100% { background: transparent; } }
+    @keyframes red-flash-anim { 0% { background: rgba(255, 0, 0, 0.8); } 100% { background: transparent; } }
+    .success-trigger { animation: green-flash-anim 0.5s forwards; position: fixed; top:0; left:0; width:100vw; height:100vh; z-index:9999; pointer-events:none; }
+    .error-trigger { animation: red-flash-anim 0.5s forwards; position: fixed; top:0; left:0; width:100vw; height:100vh; z-index:9999; pointer-events:none; }
+
+    /* VICTORY BOX */
     .one-of-a-kind {
         color: #00FF41; font-size: 55px !important; font-weight: bold;
-        animation: neon-glow 1.5s infinite; font-family: 'Courier New', monospace;
+        text-shadow: 0 0 20px #00FF41, 0 0 40px #00FF41;
+        font-family: 'Courier New', monospace;
+        text-align: center; margin: 20px 0;
     }
 
-    .stTextInput > div > div > input {
-        background-color: black !important; color: #FFFF00 !important;
-        border: 2px solid #FFFF00 !important; font-size: 25px !important; text-align: center;
+    .log-container {
+        background: rgba(0, 0, 0, 0.5); border: 1px solid #00FF41;
+        padding: 10px; height: 100px; overflow-y: auto;
+        font-family: 'Courier New', monospace; color: #00FF41;
     }
-
-    /* FULL SCREEN FLASHES */
-    @keyframes green-flash { 0% { background: #00FF41; opacity: 0.6; } 100% { background: transparent; opacity: 0; } }
-    @keyframes red-flash { 0% { background: #FF0000; opacity: 0.6; } 100% { background: transparent; opacity: 0; } }
-    .success-trigger { animation: green-flash 0.6s ease-out; position: fixed; top:0; left:0; width:100vw; height:100vh; z-index:999; pointer-events:none; }
-    .error-trigger { animation: red-flash 0.6s ease-out; position: fixed; top:0; left:0; width:100vw; height:100vh; z-index:999; pointer-events:none; }
     </style>
     """, unsafe_allow_html=True)
 
 # --- 2. SESSION STATE ---
 if 'level' not in st.session_state:
     st.session_state.level = 0 
-    st.session_state.history = [">>> SYSTEM STANDBY: Awaiting Initialization..."]
+    st.session_state.history = [">>> M-CYBER TERMINAL READY..."]
     st.session_state.flash = None
 
-# --- 3. AUDIO SYSTEM (UNSTOPPABLE LOOP) ---
+# --- 3. STABLE AUDIO ENGINE ---
+# Using a more reliable YouTube embed method
 st.markdown("""
-    <iframe id="bg-music" width="0" height="0" 
-    src="https://www.youtube.com/embed/gdTl3Vi8vvY?autoplay=1&loop=1&playlist=gdTl3Vi8vvY&enablejsapi=1" 
-    frameborder="0" allow="autoplay"></iframe>
-    
+    <div id="cyber-audio-node">
+        <iframe width="0" height="0" 
+        src="https://www.youtube.com/embed/gdTl3Vi8vvY?autoplay=1&loop=1&playlist=gdTl3Vi8vvY&enablejsapi=1" 
+        frameborder="0" allow="autoplay"></iframe>
+    </div>
     <script>
-    // Forces audio to play when user interacts with the page
-    window.parent.document.addEventListener('click', function() {
-        var frame = window.parent.document.getElementById('bg-music');
-        frame.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-    }, {once: true});
+        // Force audio on any interaction
+        function playAudio() {
+            var iframe = document.querySelector('iframe');
+            if (iframe) {
+                iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            }
+        }
+        window.parent.document.addEventListener('mousedown', playAudio, {once: true});
+        window.parent.document.addEventListener('keydown', playAudio, {once: true});
     </script>
 """, unsafe_allow_html=True)
 
-# Hidden Audio triggers for Success/Error
-if st.session_state.flash == "success":
-    st.markdown('<div class="success-trigger"></div>', unsafe_allow_html=True)
-    st.markdown('<audio autoplay><source src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>', unsafe_allow_html=True)
-elif st.session_state.flash == "error":
-    st.markdown('<div class="error-trigger"></div>', unsafe_allow_html=True)
-    st.markdown('<audio autoplay><source src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>', unsafe_allow_html=True)
-
-# --- 4. GAME LOGIC ---
+# --- 4. GAME DATA ---
 LEVEL_DATA = {
     1: {"q": "LEVEL 1: BIT-SHIFT. [2, 4, 16, 256, ?]", "a": "65536"},
     2: {"q": "LEVEL 2: M-CIPHER. [Sum of MEGHA: M13, E5, G7, H8, A1]", "a": "34"},
@@ -112,44 +100,65 @@ LEVEL_DATA = {
     5: {"q": "LEVEL 5: THE PARADOX. [(True XOR True) OR (False AND True)]", "a": "FALSE"},
 }
 
+# --- 5. LOGIC & LOADING SCREEN ---
+def trigger_loading(message):
+    placeholder = st.empty()
+    with placeholder.container():
+        st.markdown(f"<h2 style='color:#00FF41; text-align:center;'>{message}</h2>", unsafe_allow_html=True)
+        bar = st.progress(0)
+        for i in range(100):
+            time.sleep(0.01)
+            bar.progress(i + 1)
+    placeholder.empty()
+
 def check_logic():
     raw = st.session_state.input_box.strip().upper()
     clean = raw.replace(" ", "").replace("O(", "").replace(")", "")
     
-    if st.session_state.level == 0:
-        if clean == "START":
-            st.session_state.level = 1
-            st.session_state.history.append(">> PROTOCOL START. DECRYPTING...")
-            st.session_state.flash = "success"
+    if st.session_state.level == 0 and clean == "START":
+        trigger_loading("INITIALIZING CYBER CORE...")
+        st.session_state.level = 1
+        st.session_state.history.append(">> SECURITY OVERRIDDEN. COMMENCING.")
+    
     elif 1 <= st.session_state.level <= 5:
         if clean == LEVEL_DATA[st.session_state.level]["a"]:
-            st.session_state.level += 1
             st.session_state.flash = "success"
-            st.session_state.history.append(f">> ACCESS GRANTED: L{st.session_state.level-1} CLEAR.")
+            trigger_loading(f"DECRYPTING LEVEL {st.session_state.level}...")
+            st.session_state.level += 1
+            st.session_state.history.append(f">> L{st.session_state.level-1} SECURED.")
         else:
             st.session_state.flash = "error"
-            st.session_state.history.append(f">> ACCESS DENIED: {raw} IS INVALID.")
+            st.session_state.history.append(f">> ACCESS DENIED: '{raw}'")
+            
     elif st.session_state.level == 6 and clean == "2014":
+        trigger_loading("SYNCING TIMELINE...")
         st.session_state.level = 7
         st.session_state.flash = "success"
-        st.session_state.history.append(">> TIMELINE SYNCED.")
+    
     elif st.session_state.level == 7 and clean == "G-DRAGON":
+        trigger_loading("VERIFYING SOVEREIGN IDENTITY...")
         st.session_state.level = 8
         st.session_state.flash = "success"
-    
+
     st.session_state.input_box = ""
-    st.session_state.flash = st.session_state.flash # Keep flash state for one render
 
-# --- 5. RENDER UI ---
+# --- 6. RENDER ---
 
-# Integrated Log Feed
-log_content = "".join([f"<div style='color:#00FF41;'>{l}</div>" for l in st.session_state.history[::-1]])
-st.markdown(f'<div class="log-container">{log_content}</div>', unsafe_allow_html=True)
+# Handle Flashes
+if st.session_state.flash == "success":
+    st.markdown('<div class="success-trigger"></div>', unsafe_allow_html=True)
+    st.session_state.flash = None
+elif st.session_state.flash == "error":
+    st.markdown('<div class="error-trigger"></div>', unsafe_allow_html=True)
+    st.session_state.flash = None
+
+# Log Feed
+log_html = "".join([f"<div>{l}</div>" for l in st.session_state.history[::-1]])
+st.markdown(f'<div class="log-container">{log_html}</div>', unsafe_allow_html=True)
 
 if st.session_state.level == 0:
     st.markdown('<p class="intro-text">M-CYBER SECURITY TERMINAL</p>', unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align:center; color:#00FF41;'>[ SYSTEM LOCKED ]</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; color:#FFFF00; border: 1px dashed #FFFF00; padding: 10px;'> --- COMMAND: TYPE 'START' AND PRESS ENTER TO BEGIN THE DECRYPTION MISSION --- </p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; color:#FFFF00;'>SYSTEM IDLE. TYPE 'START' TO BEGIN.</p>", unsafe_allow_html=True)
     st.text_input("", key="input_box", on_change=check_logic)
 
 elif 1 <= st.session_state.level <= 5:
@@ -157,26 +166,22 @@ elif 1 <= st.session_state.level <= 5:
     st.text_input("ENTER KEYCODE:", key="input_box", on_change=check_logic)
 
 elif st.session_state.level == 6:
-    st.markdown('<div style="text-align:center; border:4px solid red; padding:20px; color:red;"><h1>⚠️ BOSS LOCK: LEVEL 1 ⚠️</h1><p>YEAR OF BIRTH + MONTH OF INFINITY + DAY OF DOUBLE-EIGHT</p></div>', unsafe_allow_html=True)
+    st.markdown('<div style="text-align:center; border:2px solid red; padding:20px; color:red;"><h1>⚠️ ENCRYPTION LOCK: LEVEL 1 ⚠️</h1><p style='color: white; font-size: 20px;'>SYNC THE KING OF K-POP TIMELINE</p><p>YEAR OF BIRTH + MONTH OF INFINITY + DAY OF DOUBLE-EIGHT</p></div>', unsafe_allow_html=True)
     st.text_input("SYNC CODE:", key="input_box", on_change=check_logic)
 
 elif st.session_state.level == 7:
-    st.markdown('<div style="text-align:center; border:4px solid #BC13FE; padding:20px; color:#BC13FE;"><h1>🚨 FINAL GATE 🚨</h1><p>WHO IS THE ONE TRUE KING?</p></div>', unsafe_allow_html=True)
+    st.markdown('<div style="text-align:center; border:2px solid #BC13FE; padding:20px; color:#BC13FE;"><h1>🚨 FINAL GATE 🚨</h1><p>WHO IS THE ONE TRUE KING?</p></div>', unsafe_allow_html=True)
     st.text_input("AUTHORIZE:", key="input_box", on_change=check_logic)
 
 elif st.session_state.level == 8:
     st.markdown(f"""
-        <div class="victory-box">
-            <h1 style="font-size:70px; color:#FFFF00;">👑 MISSION ACCOMPLISHED</h1>
+        <div style="border:10px solid #FFFF00; padding:50px; background:black; border-radius:30px; text-align:center;">
+            <h1 style="color:#FFFF00; font-size:60px;">👑 MISSION ACCOMPLISHED</h1>
             <div class="one-of-a-kind">Yes, sir ONE OF A KIND 💸 🐉</div>
-            <p style="color:#00FF41; margin-top:20px;">WELCOME HOME, G-DRAGON.</p>
+            <p style="color:#00FF41; font-size:20px;">SYSTEM SECURED. WELCOME HOME, G-DRAGON.</p>
         </div>
     """, unsafe_allow_html=True)
     st.balloons()
-    if st.button("REBOOT"):
+    if st.button("RESTART"):
         st.session_state.level = 0
-        st.session_state.history = [">>> SYSTEM REBOOTED..."]
         st.rerun()
-
-# Clean flash state
-st.session_state.flash = None
