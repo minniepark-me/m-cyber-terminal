@@ -231,7 +231,7 @@ elif st.session_state.level == 8:
         <div style="border:10px solid #FFFF00; padding:50px; background:black; border-radius:30px; text-align:center; box-shadow: 0 0 50px rgba(255, 255, 0, 0.4);">
             <h1 style="color:#FFFF00; font-size:60px; margin-bottom:10px;">👑 MISSION ACCOMPLISHED 🐉</h1>
             <div class="one-of-a-kind">Yes, sir ONE OF A KIND 💸</div>
-            <p style="color:#00FF41; font-size:20px; border-top: 1px solid #00FF41; padding-top:20px;">SYSTEM SECURED. WELCOME HOME, G-DRAGON.</p>
+            <p style="color:#00FF41; font-size:20px; border-top: 1px solid #00FF41; padding-top:20px;">SYSTEM SECURED. WELCOME TO FAM 🌼.</p>
         </div>
     """, unsafe_allow_html=True)
     st.balloons()
